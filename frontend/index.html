@@ -1,0 +1,213 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Order Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+            width: 180px;
+        }
+
+        button {
+            padding: 9px 15px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        #response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f8f8;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Order Management System</h1>
+
+    <h2>Create Order</h2>
+
+    <form id="orderForm">
+
+        <label>Product ID:</label>
+        <input
+            type="number"
+            id="product_id"
+            placeholder="Enter Product ID"
+            required
+        >
+
+        <label>Quantity:</label>
+        <input
+            type="number"
+            id="quantity"
+            placeholder="Enter Quantity"
+            min="1"
+            required
+        >
+
+        <button type="submit">Create Order</button>
+
+    </form>
+
+    <h2>Response</h2>
+
+    <pre id="response"></pre>
+
+    <hr>
+
+    <h2>Orders</h2>
+
+    <button onclick="viewOrders()">View Orders</button>
+
+    <table id="ordersTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+
+        <tbody id="ordersBody">
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+
+    const ORDER_SERVICE = "http://13.201.130.54:5001";
+
+
+    // Create Order
+    document.getElementById("orderForm").addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+        const product_id = document.getElementById("product_id").value;
+        const quantity = document.getElementById("quantity").value;
+
+        try {
+
+            const response = await fetch(`${ORDER_SERVICE}/orders`, {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    product_id: Number(product_id),
+                    quantity: Number(quantity)
+                })
+
+            });
+
+            const data = await response.json();
+
+            document.getElementById("response").textContent =
+                JSON.stringify(data, null, 2);
+
+            if (response.ok) {
+                viewOrders();
+            }
+
+        } catch (error) {
+
+            document.getElementById("response").textContent =
+                "Error: " + error;
+
+        }
+
+    });
+
+
+    // View Orders
+    async function viewOrders() {
+
+        try {
+
+            const response = await fetch(`${ORDER_SERVICE}/orders`);
+
+            const orders = await response.json();
+
+            const ordersBody = document.getElementById("ordersBody");
+
+            ordersBody.innerHTML = "";
+
+            orders.forEach(order => {
+
+                const row = `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.product_name}</td>
+                        <td>${order.quantity}</td>
+                        <td>₹${order.total_price}</td>
+                    </tr>
+                `;
+
+                ordersBody.innerHTML += row;
+
+            });
+
+        } catch (error) {
+
+            document.getElementById("response").textContent =
+                "Error loading orders: " + error;
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
+```
+
