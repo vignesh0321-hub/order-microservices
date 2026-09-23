@@ -1,0 +1,21 @@
+services:
+
+  product-service:
+    image: product-service
+    container_name: product-service
+    env_file:
+      - ./product-service/.env
+    ports:
+      - "5000:5000"
+
+  order-service:
+    image: order-service
+    container_name: order-service
+    env_file:
+      - ./order-service/.env
+    environment:
+      PRODUCT_SERVICE_URL: http://product-service:5000
+    ports:
+      - "5001:5001"
+    depends_on:
+      - product-service

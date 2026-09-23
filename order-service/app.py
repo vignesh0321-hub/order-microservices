@@ -15,6 +15,7 @@ DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
 DB_PORT = int(os.getenv("DB_PORT", 3306))
+PRODUCT_SERVICE_URL = os.getenv("PRODUCT_SERVICE_URL", "http://localhost:5000")
 
 
 def get_db_connection():
@@ -48,7 +49,7 @@ def get_orders():
     # Get product details from Product Service
     for order in orders:
         response = requests.get(
-            f"http://localhost:5000/products/{order['product_id']}"
+            f"{PRODUCT_SERVICE_URL}/products/{order['product_id']}"
         )
 
         if response.status_code == 200:
@@ -124,7 +125,7 @@ def update_order(order_id):
 
     # Get product price from Product Service
     response = requests.get(
-        f"http://localhost:5000/products/{product_id}"
+        f"{PRODUCT_SERVICE_URL}/products/{product_id}"
     )
 
     if response.status_code != 200:
@@ -189,7 +190,7 @@ def add_order():
 
     # Call Product Service
     response = requests.get(
-        f"http://localhost:5000/products/{product_id}"
+        f"{PRODUCT_SERVICE_URL}/products/{product_id}"
     )
 
     if response.status_code != 200:
