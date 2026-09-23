@@ -18,3 +18,9 @@ jobs:
 
       - name: Build Order Docker image
         run: docker build -t order-service ./order-service
+
+      - name: Check Product Service
+        run: python -m py_compile product-service/app.py
+
+      - name: Check Order Service
+        run: python -m py_compile order-service/app.py
