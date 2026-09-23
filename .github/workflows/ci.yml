@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Product Docker image
+        run: docker build -t product-service ./product-service
+
+      - name: Build Order Docker image
+        run: docker build -t order-service ./order-service
